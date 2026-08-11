@@ -1,0 +1,134 @@
+/* page-compare.js — Logic for compare.html */
+
+(function () {
+  'use strict';
+
+  function getDDNetPts(rank, maxPts) {
+    if (rank === 1)  return maxPts;
+    if (rank === 2)  return Math.floor(maxPts * 0.8);
+    if (rank === 3)  return Math.floor(maxPts * 0.65);
+    if (rank <= 5)   return Math.floor(maxPts * 0.5);
+    if (rank <= 10)  return Math.floor(maxPts * 0.3);
+    if (rank <= 20)  return Math.floor(maxPts * 0.1);
+    return 0;
+  }
+
+  function getMasteryPts(tBest, tPlayer, s, maxPts) {
+    const timeRatio = tPlayer / tBest;
+    return Math.floor(maxPts * Math.exp(-s * (Math.max(1, timeRatio) - 1)));
+  }
+
+  function generateScenario(name, desc, tBest, s, maxPts, players) {
+    const labels = [];
+    const ddnetData = [];
+    const masteryData = [];
+
+    players.forEach((time, index) => {
+      const rank = index + 1;
+      labels.push(time > 60 ? `${Math.floor(time / 60)}m ${Math.floor(time % 60)}s` : `${time.toFixed(1)}s`);
+      ddnetData.push(getDDNetPts(rank, maxPts));
+      masteryData.push(getMasteryPts(tBest, time, s, maxPts));
+    });
+
+    return { name, desc, labels, ddnetData, masteryData };
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderHeader('compare');
+
+    const dict = getDict();
+    document.documentElement.lang = currentLang;
+
+    if (typeof renderBreadcrumbs === 'function') {
+      const homeLabel = dict.breadcrumbs ? dict.breadcrumbs.home : 'Home';
+      const compareLabel = dict.breadcrumbs ? dict.breadcrumbs.compare : 'Compare';
+      renderBreadcrumbs([
+        { label: homeLabel, url: '/' },
+        { label: compareLabel }
+      ]);
+    }
+
+    document.getElementById('compare-title').textContent = dict.compare.title;
+    document.getElementById('compare-desc').textContent  = dict.compare.desc;
+
+    const scenarios = [
+      generateScenario(dict.compare.scenarios[0].name, dict.compare.scenarios[0].desc, 10.0,   3.0, 100,  [10.0, 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9]),
+      generateScenario(dict.compare.scenarios[1].name, dict.compare.scenarios[1].desc, 120.0,  2.0, 500,  [120, 121, 122, 123, 124, 125, 128, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142]),
+      generateScenario(dict.compare.scenarios[2].name, dict.compare.scenarios[2].desc, 7200.0, 0.5, 1000, [7200, 9000, 9500, 10000, 11000, 12000, 14000, 15000, 18000, 20000]),
+      generateScenario(dict.compare.scenarios[3].name, dict.compare.scenarios[3].desc, 30.0,   2.5, 200,  [30.00, 30.01, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0, 38.0]),
+      generateScenario(dict.compare.scenarios[4].name, dict.compare.scenarios[4].desc, 300.0,  1.5, 300,  [300, 305, 310]),
+    ];
+
+    const container = document.getElementById('scenarios-container');
+
+    Chart.defaults.color = '#85878d';
+    Chart.defaults.font.family = 'Arial Narrow, Segoe UI, sans-serif';
+
+    scenarios.forEach((scenario, i) => {
+      const div = document.createElement('div');
+      div.className = 'compare-scenario glass-panel p-6 md:p-8 space-y-6';
+      div.innerHTML = `
+        <div class="compare-scenario-heading">
+          <div class="compare-scenario-number">${String(i + 1).padStart(2, '0')}</div>
+          <div class="min-w-0">
+            <h3 class="font-bold text-xl text-white">${escapeHtml(scenario.name)}</h3>
+            <p class="text-sm text-slate-400">${scenario.desc}</p>
+          </div>
+        </div>
+        <div class="compare-chart-surface h-64 min-h-[250px] relative">
+          <canvas id="chart-${i}"></canvas>
+        </div>
+      `;
+      container.appendChild(div);
+
+      const ctx = document.getElementById(`chart-${i}`).getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: scenario.labels,
+          datasets: [
+            {
+              label: 'Vanilla DDNet',
+              data: scenario.ddnetData,
+              borderColor: '#f06b62',
+              backgroundColor: '#f06b62',
+              stepped: true,
+              borderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            },
+            {
+              label: 'Map Mastery',
+              data: scenario.masteryData,
+              borderColor: '#ff9d2e',
+              backgroundColor: '#ff9d2e',
+              tension: 0.4,
+              borderWidth: 3,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', align: 'end', labels: { color: '#b7b5b0', usePointStyle: true, boxWidth: 8, padding: 18 } },
+            tooltip: {
+              backgroundColor: '#111215',
+              borderColor: 'rgba(255,157,46,.35)',
+              borderWidth: 1,
+              titleColor: '#85878d',
+              bodyColor: '#f2f0e9',
+              padding: 10,
+            },
+          },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,.055)', tickColor: 'transparent' }, ticks: { color: '#686a70' } },
+            y: { grid: { color: 'rgba(255,255,255,.055)' }, ticks: { color: '#686a70' } },
+          },
+        },
+      });
+    });
+  });
+})();

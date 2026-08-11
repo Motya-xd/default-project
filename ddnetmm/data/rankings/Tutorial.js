@@ -1,0 +1,1 @@
+window.mapRankingCurrent = [{"player":"玄黑 & 小涵","time":187.4,"timestamp":"2025-06-18T07:13:51","isTeamRank":true,"rank":1},{"player":"SLEΞK & FLEΞK","time":209.62,"timestamp":"2024-08-01T01:40:21","isTeamRank":true,"rank":2}];

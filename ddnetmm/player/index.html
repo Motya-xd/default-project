@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Profile — DDNet Map Mastery</title>
+  <link rel="canonical" href="https://ddnetmm.ru/player">
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+      (function(m,e,t,r,i,k,a){
+          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=111228237', 'ym');
+
+      ym(111228237, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/111228237" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
+
+  <meta name="description" content="Профиль игрока DDNet Map Mastery — статистика Base PTS, Skill PTS и Total Mastery.">
+  
+  <!-- Open Graph / Facebook / Discord -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Player Profile — DDNet Map Mastery">
+  <meta property="og:description" content="Профиль игрока DDNet Map Mastery — статистика Base PTS, Skill PTS и Total Mastery.">
+  <meta property="og:image" content="../icon.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Player Profile — DDNet Map Mastery">
+  <meta name="twitter:description" content="Профиль игрока DDNet Map Mastery — статистика Base PTS, Skill PTS и Total Mastery.">
+  <meta name="twitter:image" content="../icon.png">
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="shortcut icon" href="../favicon.ico">
+  <link rel="icon" type="image/png" href="../icon.png">
+  <script src="../js/tailwindcss.js"></script>
+  <link rel="stylesheet" href="../css/style.css?v=20260810-mobile-1">
+  <link rel="stylesheet" href="../css/tee-skin-renderer.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ffa500',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="page-player site-loading antialiased text-slate-200 font-sans min-h-screen">
+  <div id="site-loader" role="status" aria-live="polite" aria-label="Загрузка сайта">
+    <div class="site-loader-card">
+      <img class="site-loader-logo" src="../icon.png" alt="" aria-hidden="true">
+      <p class="site-loader-title">DDNET MAP MASTERY</p>
+      <p class="site-loader-status">Загрузка / Loading</p>
+      <div class="site-loader-track" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div id="header-container"></div>
+
+  <main class="min-h-screen p-4 md:p-8 animate-fade-in">
+    <div id="loading" class="text-center py-20">
+      <div id="loader-icon" class="inline-block text-primary"></div>
+      <p class="mt-4 text-slate-400" id="player-loading"></p>
+    </div>
+
+    <div id="error" class="text-center py-20 hidden">
+      <h2 class="text-2xl font-bold text-red-500" id="player-error"></h2>
+    </div>
+
+    <div id="content" class="inner-page-shell hidden space-y-8">
+      <div id="breadcrumbs-container"></div>
+
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="space-y-4">
+          <div class="flex items-center gap-5">
+            <div id="player-tee-container" class="shrink-0 flex items-center justify-center min-w-[96px] min-h-[96px]"></div>
+            <header class="inner-page-hero space-y-2">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h1 class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400" id="player-name"></h1>
+                <button
+                  id="share-profile-btn"
+                  style="padding:0.4em 0.8em;font-size:0.85em;background:rgba(255,165,0,0.15);color:#ffa500;border:1px solid rgba(255,165,0,0.5);font-weight:bold;cursor:pointer;display:inline-flex;align-items:center;gap:0.4em;transition:all 0.2s;"
+                  onmouseover="this.style.background='#ffa500';this.style.color='#111';"
+                  onmouseout="this.style.background='rgba(255,165,0,0.15)';this.style.color='#ffa500';"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                  <span id="share-profile-text"></span>
+                </button>
+              </div>
+              <p class="text-primary font-medium tracking-wide uppercase text-sm" id="player-title"></p>
+              <div id="player-skill-league" class="player-skill-league" aria-live="polite"></div>
+              <div id="player-mastery-level" class="mastery-level-card" aria-live="polite">
+                <div class="mastery-level-head">
+                  <span id="mastery-level-label" class="mastery-level-badge"></span>
+                  <span id="mastery-level-progress-text" class="mastery-level-progress-text"></span>
+                </div>
+                <div class="mastery-level-track" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                  <div id="mastery-level-progress" class="mastery-level-progress"></div>
+                </div>
+                <span id="mastery-level-next" class="mastery-level-next"></span>
+              </div>
+            </header>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="player-metrics grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="metric-card glass-panel p-6 flex flex-col justify-center items-center gap-2">
+            <div class="text-sm text-slate-300 font-bold uppercase tracking-wider" id="stat-base"></div>
+            <div class="text-3xl font-black font-mono text-emerald-400" id="val-base"></div>
+          </div>
+          <div class="metric-card glass-panel p-6 flex flex-col justify-center items-center gap-2">
+            <div class="text-sm text-slate-300 font-bold uppercase tracking-wider" id="stat-skill"></div>
+            <div class="text-3xl font-black font-mono text-purple-400" id="val-skill"></div>
+          </div>
+          <div class="gold-card p-6 flex flex-col justify-center items-center gap-2">
+            <div class="text-sm text-amber-400 font-bold uppercase tracking-wider" id="stat-total"></div>
+            <div class="text-4xl font-black font-mono text-amber-400" id="val-total"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Maps List -->
+      <div class="glass-panel overflow-hidden mt-12">
+        <div class="p-6 md:p-8 border-b border-white/[0.05] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <h2 class="text-2xl font-bold flex items-center gap-3" id="player-maps-title"></h2>
+
+          <!-- Control Panel: Filter, Search, Sort -->
+          <div class="flex items-center gap-3 flex-wrap w-full md:w-auto">
+            <!-- Server Category Filter -->
+            <select id="map-filter-server" style="padding:0.4em 0.8em;font-size:0.85em;background:#111111;color:#ffffff;border:1px solid #ffa500;font-weight:600;outline:none;">
+              <option value="ALL">Все категории / All</option>
+              <option value="Novice">Novice</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Brutal">Brutal</option>
+              <option value="Insane">Insane</option>
+              <option value="Solo">Solo</option>
+              <option value="Race">Race</option>
+              <option value="Dummy">Dummy</option>
+              <option value="Oldschool">Oldschool</option>
+              <option value="DDmaX">DDmaX</option>
+            </select>
+
+            <!-- Search Map Input -->
+            <input
+              type="text"
+              id="map-search-input"
+              placeholder="Поиск карты / Search map..."
+              style="padding:0.4em 0.8em;font-size:0.85em;background:#111111;color:#ffffff;border:1px solid rgba(255,255,255,0.2);width:12em;box-sizing:border-box;font-weight:600;"
+            />
+
+            <!-- Sort Option -->
+            <select id="map-sort-order" style="padding:0.4em 0.8em;font-size:0.85em;background:#111111;color:#ffffff;border:1px solid rgba(255,255,255,0.2);font-weight:600;outline:none;">
+              <option value="skill-desc">Skill Bonus ↓</option>
+              <option value="skill-asc">Skill Bonus ↑</option>
+              <option value="time-asc">Время / Time ↑</option>
+              <option value="time-desc">Время / Time ↓</option>
+              <option value="name-asc">Название A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="player-table-scroll overflow-x-auto">
+          <table class="player-maps-table w-full text-left border-collapse whitespace-nowrap">
+            <thead>
+              <tr class="bg-white/[0.02] border-b border-white/[0.05] text-slate-400 text-sm tracking-wide">
+                <th class="p-4 font-semibold" id="table-map"></th>
+                <th class="p-4 font-semibold" id="table-server"></th>
+                <th class="p-4 font-semibold text-right" id="table-time"></th>
+                <th class="p-4 font-semibold text-right" id="table-base-col"></th>
+                <th class="p-4 font-semibold text-right" id="table-skill-col"></th>
+                <th class="p-4 font-semibold text-center" id="table-top-col"></th>
+              </tr>
+            </thead>
+            <tbody id="maps-body">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/[0.08] bg-slate-900/60 py-8 mt-12 text-slate-400 text-xs sm:text-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>
+        <p class="font-medium text-slate-300">DDNet Map Mastery &copy; 2026</p>
+        <p class="text-slate-500 text-xs mt-1">Альтернативный рейтинг и система очков для сообщества DDNet.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-6">
+        <a href="/" class="hover:text-white transition-colors">Главная</a>
+        <a href="/about" class="hover:text-white transition-colors">О проекте</a>
+        <a href="/compare" class="hover:text-white transition-colors">Сравнение</a>
+        <a href="/privacy" class="hover:text-white transition-colors">Политика конфиденциальности</a>
+        <a href="https://github.com/m09l6d0ur13ii/ddnetmm" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script defer src="../data/maps.js?v=a1601ea"></script>
+  <script defer src="../data/unique_players.js?v=a1601ea"></script>
+  <script defer src="../data/map_records.js?v=a1601ea"></script>
+  <script defer src="../data/map_stats.js?v=a1601ea"></script>
+  <script defer src="../data/blacklist.js?v=a1601ea"></script>
+  <script defer src="../data/map_enriched.js?v=a1601ea"></script>
+  <script defer src="../data/map_min_times.js?v=a1601ea"></script>
+  <script defer src="../data/custom_map_records.js?v=a1601ea"></script>
+  <script defer src="../js/i18n.js"></script>
+  <script defer src="../js/api.js?v=20260810-2"></script>
+  <script defer src="../js/app.js?v=20260807-3"></script>
+  <script defer src="../js/tee-skin-renderer.umd.js"></script>
+  <script defer src="../js/page-player.js?v=20260810-2"></script>
+</body>
+</html>

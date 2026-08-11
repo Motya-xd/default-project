@@ -1,0 +1,1 @@
+window.mapRankingCurrent = [{"player":"devestrog & -剣 onlyHS","time":460.34,"timestamp":"2025-12-31T23:31:42","isTeamRank":true,"rank":1},{"player":"kagelio & Peace Duke","time":2216.66,"timestamp":"2025-04-02T11:20:55","isTeamRank":true,"rank":2},{"player":"Tyga.comeback? & FirstClass & Pryzed","time":86400.2,"timestamp":"2025-12-24T21:41:46","isTeamRank":true,"rank":3}];

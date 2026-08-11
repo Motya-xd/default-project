@@ -1,0 +1,47 @@
+# Local design reference repositories (large, independently versioned).
+design_skills/
+
+# Local tool configuration containing credentials.
+opencode.json
+**/.git.parent-upload-backup
+**/.git.parent-upload-backup/
+
+# Generated build directories and packaged builds.
+**/build*/
+**/portable*/
+**/CMakeFiles/
+**/.vs/
+**/Debug/
+**/Release/
+**/target/
+
+# Compiled objects, libraries, executables, and debug data.
+*.obj
+*.o
+*.a
+*.lib
+*.rlib
+*.dll
+*.so
+*.dylib
+*.exe
+*.pdb
+*.ilk
+*.idb
+*.exp
+*.tlog
+*.pyc
+
+# Generated build-system files and distributable archives.
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.ninja
+*.ninja_deps
+*.ninja_log
+*.lastbuildstate
+*.timestamp
+*.recipe
+*.cargo-artifact-lock
+*.cargo-build-lock
