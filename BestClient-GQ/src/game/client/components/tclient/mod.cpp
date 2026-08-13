@@ -157,21 +157,139 @@ void CMod::OnRender()
 
 void CMod::RenderWeaponCollision()
 {
-	if(!g_Config.m_BcGqShowWeaponCollision || !GameClient()->m_Controls.m_aShowHookColl[g_Config.m_ClDummy] || !GameClient()->m_Snap.m_pLocalCharacter || GameClient()->m_Snap.m_SpecInfo.m_Active) return;
-	const int OwnerId=GameClient()->m_Snap.m_LocalClientId; CCharacter *pOwner=GameClient()->m_PredictedWorld.GetCharacterById(OwnerId);
-	const int Weapon=pOwner?pOwner->GetActiveWeapon():GameClient()->m_Snap.m_pLocalCharacter->m_Weapon; if(Weapon!=WEAPON_SHOTGUN&&Weapon!=WEAPON_GRENADE&&Weapon!=WEAPON_LASER)return;
-	vec2 Aim(GameClient()->m_Controls.m_aInputData[g_Config.m_ClDummy].m_TargetX,GameClient()->m_Controls.m_aInputData[g_Config.m_ClDummy].m_TargetY); if(Aim==vec2(0,0))Aim=vec2(0,-1); const vec2 Dir=normalize(Aim), Start=GameClient()->m_LocalCharacterPos;
-	const int Zone=Collision()->IsTune(Collision()->GetMapIndex(Start)); const CTuningParams *pTune=pOwner?&pOwner->Core()->m_Tuning:GameClient()->GetTuning(Zone); std::vector<IGraphics::CLineItem> vLines;
-	if(Weapon==WEAPON_GRENADE)
+	if(!g_Config.m_BcGqShowWeaponCollision || !GameClient()->m_Controls.m_aShowHookColl[g_Config.m_ClDummy] || GameClient()->m_Snap.m_SpecInfo.m_Active) return;
+
+	auto RenderTrajectoryForTee = [&](int DummyIndex) {
+		const int LocalId = GameClient()->m_aLocalIds[DummyIndex];
+		if(!in_range(LocalId, MAX_CLIENTS - 1)) return;
+		CCharacter *pChar = GameClient()->m_PredictedWorld.GetCharacterById(LocalId);
+		if(!pChar) return;
+
+		const int Weapon = pChar->GetActiveWeapon();
+		if(Weapon != WEAPON_SHOTGUN && Weapon != WEAPON_GRENADE && Weapon != WEAPON_LASER) return;
+
+		vec2 Aim(GameClient()->m_Controls.m_aInputData[DummyIndex].m_TargetX, GameClient()->m_Controls.m_aInputData[DummyIndex].m_TargetY);
+		if(Aim == vec2(0, 0)) Aim = vec2(0, -1);
+		const vec2 Dir = normalize(Aim);
+		const vec2 Start = pChar->m_Pos;
+
+		const int Zone = Collision()->IsTune(Collision()->GetMapIndex(Start));
+		const CTuningParams *pTune = &pChar->Core()->m_Tuning;
+
+		std::vector<IGraphics::CLineItem> vLines;
+		vec2 HitPoint = Start;
+		bool HasHitPoint = false;
+		int HitTargetClientId = -1;
+
+		auto CheckHitTee = [&](vec2 SegStart, vec2 SegEnd) -> int {
+			for(int i = 0; i < MAX_CLIENTS; i++)
+			{
+				if(i == LocalId || !GameClient()->m_Snap.m_aCharacters[i].m_Active) continue;
+				vec2 CharPos = vec2(GameClient()->m_Snap.m_aCharacters[i].m_Cur.m_X, GameClient()->m_Snap.m_aCharacters[i].m_Cur.m_Y);
+				vec2 Closest = closest_point_on_line(SegStart, SegEnd, CharPos);
+				if(distance(Closest, CharPos) < 28.0f)
+				{
+					return i;
+				}
+			}
+			return -1;
+		};
+
+		if(Weapon == WEAPON_GRENADE)
+		{
+			vec2 Prev = Start + Dir * (CCharacterCore::PhysicalSize() * 0.75f);
+			const vec2 Origin = Prev;
+			const float Step = 1.0f / Client()->GameTickSpeed();
+			for(float T = Step; T <= pTune->m_GrenadeLifetime; T += Step)
+			{
+				vec2 Pos = CalcPos(Origin, Dir, pTune->m_GrenadeCurvature, pTune->m_GrenadeSpeed, T);
+				vec2 Hit = Pos;
+				const int Wall = Collision()->IntersectLine(Prev, Pos, &Hit, nullptr);
+
+				int HitPlayer = CheckHitTee(Prev, Hit);
+				if(HitPlayer != -1)
+				{
+					vLines.emplace_back(Prev.x, Prev.y, Hit.x, Hit.y);
+					HitPoint = Hit;
+					HasHitPoint = true;
+					HitTargetClientId = HitPlayer;
+					break;
+				}
+
+				vLines.emplace_back(Prev.x, Prev.y, Hit.x, Hit.y);
+				if(Wall)
+				{
+					HitPoint = Hit;
+					HasHitPoint = true;
+					break;
+				}
+				Prev = Pos;
+			}
+		}
+		else
+		{
+			vec2 Pos = Start, D = Dir;
+			float Energy = pTune->m_LaserReach;
+			for(int Bounce = 0; Bounce <= pTune->m_LaserBounceNum && Energy > 0; Bounce++)
+			{
+				vec2 Tile, End = Pos + D * Energy;
+				const int Hit = Collision()->IntersectLineTeleWeapon(Pos, End, &Tile, &End);
+
+				int HitPlayer = CheckHitTee(Pos, End);
+				if(HitPlayer != -1)
+				{
+					vLines.emplace_back(Pos.x, Pos.y, End.x, End.y);
+					HitPoint = End;
+					HasHitPoint = true;
+					HitTargetClientId = HitPlayer;
+					break;
+				}
+
+				vLines.emplace_back(Pos.x, Pos.y, End.x, End.y);
+				if(!Hit) break;
+				vec2 Vel = D * 4.0f, BouncePos = End;
+				Collision()->MovePoint(&BouncePos, &Vel, 1.0f, nullptr);
+				Energy -= distance(Pos, BouncePos) + pTune->m_LaserBounceCost;
+				Pos = BouncePos;
+				D = normalize(Vel);
+			}
+		}
+
+		if(vLines.empty()) return;
+
+		ColorRGBA LineColor = (Weapon == WEAPON_GRENADE) ? ColorRGBA(1.0f, 0.55f, 0.15f, 0.85f) :
+		                      (Weapon == WEAPON_SHOTGUN) ? ColorRGBA(0.2f, 0.85f, 1.0f, 0.85f) :
+		                      ColorRGBA(1.0f, 0.2f, 0.35f, 0.85f);
+		if(HitTargetClientId != -1)
+		{
+			LineColor = ColorRGBA(1.0f, 0.1f, 0.1f, 0.95f);
+		}
+
+		Graphics()->TextureClear();
+		Graphics()->LinesBegin();
+		Graphics()->SetColor(LineColor);
+		Graphics()->LinesDraw(vLines.data(), vLines.size());
+		Graphics()->LinesEnd();
+
+		if(HasHitPoint)
+		{
+			const float CrossSize = (HitTargetClientId != -1) ? 10.0f : 6.0f;
+			IGraphics::CLineItem CrossLines[] = {
+				{HitPoint.x - CrossSize, HitPoint.y, HitPoint.x + CrossSize, HitPoint.y},
+				{HitPoint.x, HitPoint.y - CrossSize, HitPoint.x, HitPoint.y + CrossSize}
+			};
+			Graphics()->LinesBegin();
+			Graphics()->SetColor((HitTargetClientId != -1) ? ColorRGBA(1.0f, 0.2f, 0.2f, 1.0f) : LineColor);
+			Graphics()->LinesDraw(CrossLines, 2);
+			Graphics()->LinesEnd();
+		}
+	};
+
+	RenderTrajectoryForTee(0);
+	if(Client()->DummyConnected())
 	{
-		vec2 Prev=Start+Dir*(CCharacterCore::PhysicalSize()*.75f); const vec2 Origin=Prev; const float Step=1.f/Client()->GameTickSpeed();
-		for(float T=Step;T<=pTune->m_GrenadeLifetime;T+=Step){vec2 Pos=CalcPos(Origin,Dir,pTune->m_GrenadeCurvature,pTune->m_GrenadeSpeed,T),Hit=Pos; const int Wall=Collision()->IntersectLine(Prev,Pos,&Hit,nullptr); vLines.emplace_back(Prev.x,Prev.y,Hit.x,Hit.y); if(Wall)break; Prev=Pos;}
+		RenderTrajectoryForTee(1);
 	}
-	else
-	{
-		vec2 Pos=Start,D=Dir; float Energy=pTune->m_LaserReach; for(int Bounce=0;Bounce<=pTune->m_LaserBounceNum&&Energy>0;Bounce++){vec2 Tile,End=Pos+D*Energy; const int Hit=Collision()->IntersectLineTeleWeapon(Pos,End,&Tile,&End); vLines.emplace_back(Pos.x,Pos.y,End.x,End.y); if(!Hit)break; vec2 Vel=D*4.f,BouncePos=End; Collision()->MovePoint(&BouncePos,&Vel,1.f,nullptr); Energy-=distance(Pos,BouncePos)+pTune->m_LaserBounceCost; Pos=BouncePos; D=normalize(Vel);}
-	}
-	if(vLines.empty())return; Graphics()->TextureClear(); Graphics()->LinesBegin(); Graphics()->SetColor(Weapon==WEAPON_GRENADE?ColorRGBA(1,.55f,.15f,.85f):Weapon==WEAPON_SHOTGUN?ColorRGBA(.2f,.85f,1,.85f):ColorRGBA(1,.2f,.35f,.85f)); Graphics()->LinesDraw(vLines.data(),vLines.size()); Graphics()->LinesEnd();
 }
 
 void CMod::OnStateChange(int OldState, int NewState)

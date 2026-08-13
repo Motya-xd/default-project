@@ -550,39 +550,42 @@ void CItems::RenderLaser(vec2 From, vec2 Pos, ColorRGBA OuterColor, ColorRGBA In
 			{ const float Power=(Type==LASERTYPE_SHOTGUN?g_Config.m_BcGqShotgunGlowPower:g_Config.m_BcGqLaserGlowPower)/100.f; Beam(From,Pos,(12.f+14.f*Power)*maximum(Ia,.18f)*GqThickness,OuterColor.WithMultipliedAlpha(.08f+.1f*Power)); Beam(From,Pos,(2.f+2.f*Power)*maximum(Ia,.18f)*GqThickness,ColorRGBA(1,1,1,InnerColor.a*.8f)); }
 			Graphics()->QuadsEnd();
 		}
-		// Keep a small minimum scale so the style does not disappear too early
-		// on servers with aggressive laser timing (e.g. FNG tune settings).
-		CrystalBodyScale = maximum(Ia, 0.12f);
-		CrystalHeadScale = maximum(Ia, 0.32f);
-
-		Graphics()->TextureClear();
-		Graphics()->QuadsBegin();
-
-		// do outline
-		Graphics()->SetColor(OuterColor);
-		vec2 Out = vec2(Dir.y, -Dir.x) * (7.0f * Ia);
-
-		IGraphics::CFreeformItem Freeform(
-			From - Out, From + Out,
-			Pos - Out, Pos + Out);
-		Graphics()->QuadsDrawFreeform(&Freeform, 1);
-
-		// do inner
-		Out = vec2(Dir.y, -Dir.x) * (5.0f * Ia);
-		vec2 ExtraOutlinePos = Dir;
-		vec2 ExtraOutlineFrom = Type == LASERTYPE_DOOR ? vec2(0, 0) : Dir;
-		Graphics()->SetColor(InnerColor); // center
-
-		Freeform = IGraphics::CFreeformItem(
-			From - Out + ExtraOutlineFrom, From + Out + ExtraOutlineFrom,
-			Pos - Out - ExtraOutlinePos, Pos + Out - ExtraOutlinePos);
-		Graphics()->QuadsDrawFreeform(&Freeform, 1);
-
-		Graphics()->QuadsEnd();
-
-		if(HasCrystalGeometry)
+		else
 		{
-			RenderCrystalLaserBody(Graphics(), From, Pos, OuterColor, InnerColor, CrystalBodyScale, TicksHead, CrystalGeometry);
+			// Keep a small minimum scale so the style does not disappear too early
+			// on servers with aggressive laser timing (e.g. FNG tune settings).
+			CrystalBodyScale = maximum(Ia, 0.12f);
+			CrystalHeadScale = maximum(Ia, 0.32f);
+
+			Graphics()->TextureClear();
+			Graphics()->QuadsBegin();
+
+			// do outline
+			Graphics()->SetColor(OuterColor);
+			vec2 Out = vec2(Dir.y, -Dir.x) * (7.0f * Ia);
+
+			IGraphics::CFreeformItem Freeform(
+				From - Out, From + Out,
+				Pos - Out, Pos + Out);
+			Graphics()->QuadsDrawFreeform(&Freeform, 1);
+
+			// do inner
+			Out = vec2(Dir.y, -Dir.x) * (5.0f * Ia);
+			vec2 ExtraOutlinePos = Dir;
+			vec2 ExtraOutlineFrom = Type == LASERTYPE_DOOR ? vec2(0, 0) : Dir;
+			Graphics()->SetColor(InnerColor); // center
+
+			Freeform = IGraphics::CFreeformItem(
+				From - Out + ExtraOutlineFrom, From + Out + ExtraOutlineFrom,
+				Pos - Out - ExtraOutlinePos, Pos + Out - ExtraOutlinePos);
+			Graphics()->QuadsDrawFreeform(&Freeform, 1);
+
+			Graphics()->QuadsEnd();
+
+			if(HasCrystalGeometry)
+			{
+				RenderCrystalLaserBody(Graphics(), From, Pos, OuterColor, InnerColor, CrystalBodyScale, TicksHead, CrystalGeometry);
+			}
 		}
 	}
 

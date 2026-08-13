@@ -4079,13 +4079,27 @@ void CHud::RenderGqDummyCopy()
 {
 	if(!g_Config.m_BcGqDummyCopyHud || !GameClient()->m_Controls.m_DummyCopyNoHook || !g_Config.m_ClDummyCopyMoves)
 		return;
-	const float Scale = g_Config.m_BcGqDummyCopyHudSize / 100.f, W = 76.f * Scale, H = 16.f * Scale;
+	const float Scale = g_Config.m_BcGqDummyCopyHudSize / 100.f, W = 92.f * Scale, H = 20.f * Scale;
 	const float Range = maximum(0.f, m_Width - W - 8.f), Offset = Range * g_Config.m_BcGqDummyCopyHudX / 100.f;
 	const float X = g_Config.m_BcGqDummyCopyHudSide ? m_Width - W - 4.f - Offset : 4.f + Offset;
 	const float Y = std::clamp(m_Height * g_Config.m_BcGqDummyCopyHudY / 100.f - H / 2.f, 4.f, m_Height - H - 4.f);
-	Graphics()->TextureClear(); CUIRect Card = {X,Y,W,H}; Card.Draw(ColorRGBA(.02f,.02f,.025f,.82f), IGraphics::CORNER_ALL, 2.f*Scale);
-	TextRender()->TextColor(color_cast<ColorRGBA>(ColorHSLA(g_Config.m_BcGqDummyCopyHudColor)));
-	TextRender()->Text(X+5.f*Scale,Y+2.f*Scale,7.f*Scale,"COPY / NO HOOK"); TextRender()->TextColor(TextRender()->DefaultTextColor());
+
+	Graphics()->TextureClear();
+	ColorRGBA TextColor = color_cast<ColorRGBA>(ColorHSLA(g_Config.m_BcGqDummyCopyHudColor));
+
+	CUIRect Card = {X, Y, W, H};
+	Card.Draw(ColorRGBA(0.04f, 0.05f, 0.08f, 0.75f), IGraphics::CORNER_ALL, 5.0f * Scale);
+
+	CUIRect GlowBorder = {X - 1.0f * Scale, Y - 1.0f * Scale, W + 2.0f * Scale, H + 2.0f * Scale};
+	GlowBorder.Draw(TextColor.WithMultipliedAlpha(0.45f), IGraphics::CORNER_ALL, 6.0f * Scale);
+	Card.Draw(ColorRGBA(0.04f, 0.05f, 0.08f, 0.85f), IGraphics::CORNER_ALL, 5.0f * Scale);
+
+	CUIRect Indicator = {X + 4.0f * Scale, Y + 4.0f * Scale, 3.0f * Scale, H - 8.0f * Scale};
+	Indicator.Draw(TextColor, IGraphics::CORNER_ALL, 1.5f * Scale);
+
+	TextRender()->TextColor(TextColor);
+	TextRender()->Text(X + 11.0f * Scale, Y + 3.0f * Scale, 8.0f * Scale, "COPY / NO HOOK");
+	TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
 
 void CHud::RenderGqTower()
@@ -4095,10 +4109,25 @@ void CHud::RenderGqTower()
 	if(!in_range(Local, MAX_CLIENTS - 1) || !in_range(Dummy, MAX_CLIENTS - 1) || !GameClient()->m_Snap.m_aCharacters[Local].m_Active || !GameClient()->m_Snap.m_aCharacters[Dummy].m_Active) return;
 	const auto &A = GameClient()->m_Snap.m_aCharacters[Local].m_Cur; const auto &B = GameClient()->m_Snap.m_aCharacters[Dummy].m_Cur;
 	if(A.m_X != B.m_X || absolute(A.m_Y-B.m_Y) < 8) return;
-	const float Scale=g_Config.m_BcGqTowerHudSize/100.f,W=38.f*Scale,H=16.f*Scale;
+	const float Scale=g_Config.m_BcGqTowerHudSize/100.f,W=52.f*Scale,H=20.f*Scale;
 	const float X=std::clamp(m_Width*g_Config.m_BcGqTowerHudX/100.f-W/2.f,4.f,m_Width-W-4.f),Y=std::clamp(m_Height*g_Config.m_BcGqTowerHudY/100.f-H/2.f,4.f,m_Height-H-4.f);
-	Graphics()->TextureClear(); CUIRect Card={X,Y,W,H}; Card.Draw(ColorRGBA(.02f,.02f,.025f,.82f),IGraphics::CORNER_ALL,2.f*Scale);
-	TextRender()->TextColor(color_cast<ColorRGBA>(ColorHSLA(g_Config.m_BcGqTowerHudColor))); TextRender()->Text(X+5.f*Scale,Y+2.f*Scale,7.f*Scale,"TOWER"); TextRender()->TextColor(TextRender()->DefaultTextColor());
+
+	Graphics()->TextureClear();
+	ColorRGBA TextColor = color_cast<ColorRGBA>(ColorHSLA(g_Config.m_BcGqTowerHudColor));
+
+	CUIRect Card = {X, Y, W, H};
+	Card.Draw(ColorRGBA(0.04f, 0.05f, 0.08f, 0.75f), IGraphics::CORNER_ALL, 5.0f * Scale);
+
+	CUIRect GlowBorder = {X - 1.0f * Scale, Y - 1.0f * Scale, W + 2.0f * Scale, H + 2.0f * Scale};
+	GlowBorder.Draw(TextColor.WithMultipliedAlpha(0.45f), IGraphics::CORNER_ALL, 6.0f * Scale);
+	Card.Draw(ColorRGBA(0.04f, 0.05f, 0.08f, 0.85f), IGraphics::CORNER_ALL, 5.0f * Scale);
+
+	CUIRect Indicator = {X + 4.0f * Scale, Y + 4.0f * Scale, 3.0f * Scale, H - 8.0f * Scale};
+	Indicator.Draw(TextColor, IGraphics::CORNER_ALL, 1.5f * Scale);
+
+	TextRender()->TextColor(TextColor);
+	TextRender()->Text(X + 11.0f * Scale, Y + 3.0f * Scale, 8.0f * Scale, "TOWER");
+	TextRender()->TextColor(TextRender()->DefaultTextColor());
 }
 
 void CHud::RenderSpeedrunTimer()

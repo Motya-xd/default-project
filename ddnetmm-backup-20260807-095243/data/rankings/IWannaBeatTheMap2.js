@@ -1,1 +1,0 @@
-window.mapRankingCurrent = [{"player":"Nietori & OsuIst","time":469.12,"timestamp":"2024-11-20T15:20:43","isTeamRank":true,"rank":1},{"player":"\"\" & (1)\"\"","time":983.6,"timestamp":"2024-03-23T17:16:16","isTeamRank":true,"rank":2}];

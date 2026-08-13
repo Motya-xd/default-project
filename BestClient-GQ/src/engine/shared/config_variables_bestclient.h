@@ -39,6 +39,7 @@ MACRO_CONFIG_INT(BcGqBackgroundTriangles, bc_gq_background_triangles, 1, 0, 1, C
 MACRO_CONFIG_INT(BcGqBackgroundTriangleCount, bc_gq_background_triangle_count, 14, 2, 28, CFGFLAG_CLIENT | CFGFLAG_SAVE, "GQ triangle count")
 MACRO_CONFIG_INT(BcGqBackgroundLines, bc_gq_background_lines, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show GQ constellation lines")
 MACRO_CONFIG_INT(BcGqBackgroundLineDistance, bc_gq_background_line_distance, 145, 60, 240, CFGFLAG_CLIENT | CFGFLAG_SAVE, "GQ line distance")
+MACRO_CONFIG_INT(BcGqShowActionStatusAboveTee, bc_gq_show_action_status_above_tee, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show Hook / Hammer status glow badges above Tee")
 MACRO_CONFIG_INT(BcGqShowWeaponCollision, bc_gq_show_weapon_collision, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Show weapon trajectories while hook collision is held")
 MACRO_CONFIG_INT(BcGqShotgunEffect, bc_gq_shotgun_effect, 0, 0, 4, CFGFLAG_CLIENT | CFGFLAG_SAVE, "GQ shotgun effect")
 MACRO_CONFIG_INT(BcGqLaserEffect, bc_gq_laser_effect, 0, 0, 4, CFGFLAG_CLIENT | CFGFLAG_SAVE, "GQ laser effect")

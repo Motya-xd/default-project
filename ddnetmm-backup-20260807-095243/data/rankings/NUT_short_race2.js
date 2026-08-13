@@ -1,1 +1,0 @@
-window.mapRankingCurrent = [{"player":"63 turtles & Жeлудь ✪","time":7.56,"timestamp":"2025-11-20T07:15:32","isTeamRank":true,"rank":1},{"player":"Inner peace ☯ & n9","time":7.58,"timestamp":"2022-01-16T14:16:33","isTeamRank":true,"rank":2},{"player":"[D] wink117 & 青橙软糖丶","time":7.9,"timestamp":"2022-10-03T04:58:52","isTeamRank":true,"rank":3}];

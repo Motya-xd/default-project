@@ -1814,6 +1814,44 @@ void CPlayers::OnRender()
 
 		GameClient()->m_NamePlates.RenderFlyingNamePlateRopeGame(GameClient()->m_aClients[ClientId].m_RenderPos, GameClient()->m_Snap.m_apPlayerInfos[ClientId], 1.0f);
 		RenderPlayer(&GameClient()->m_aClients[ClientId].m_RenderPrev, &GameClient()->m_aClients[ClientId].m_RenderCur, &aRenderInfo[ClientId], ClientId);
+
+		if(g_Config.m_BcGqShowActionStatusAboveTee)
+		{
+			bool IsHooking = false;
+			bool IsHammering = false;
+
+			const auto &Char = GameClient()->m_Snap.m_aCharacters[ClientId];
+			if(Char.m_Active)
+			{
+				if(Char.m_Cur.m_HookState > 0)
+				{
+					IsHooking = true;
+				}
+				if(Char.m_Cur.m_Weapon == WEAPON_HAMMER && (Char.m_Cur.m_AttackTick > 0))
+				{
+					IsHammering = true;
+				}
+			}
+
+			if(IsHooking || IsHammering)
+			{
+				const vec2 Pos = GameClient()->m_aClients[ClientId].m_RenderPos + vec2(0.0f, -60.0f);
+				const char *pText = IsHooking ? "HOOK" : "HAMMER";
+				ColorRGBA TextColor = IsHooking ? ColorRGBA(0.2f, 0.85f, 1.0f, 1.0f) : ColorRGBA(1.0f, 0.4f, 0.2f, 1.0f);
+
+				Graphics()->TextureClear();
+				CUIRect Card = {Pos.x - 22.0f, Pos.y - 8.0f, 44.0f, 16.0f};
+				Card.Draw(ColorRGBA(0.04f, 0.05f, 0.08f, 0.75f), IGraphics::CORNER_ALL, 4.0f);
+
+				CUIRect Glow = {Pos.x - 23.0f, Pos.y - 9.0f, 46.0f, 18.0f};
+				Glow.Draw(TextColor.WithMultipliedAlpha(0.4f), IGraphics::CORNER_ALL, 5.0f);
+				Card.Draw(ColorRGBA(0.04f, 0.05f, 0.08f, 0.85f), IGraphics::CORNER_ALL, 4.0f);
+
+				TextRender()->TextColor(TextColor);
+				TextRender()->Text(Pos.x - (IsHooking ? 14.0f : 19.0f), Pos.y - 6.0f, 7.0f, pText);
+				TextRender()->TextColor(TextRender()->DefaultTextColor());
+			}
+		}
 	}
 	if(RenderLastId != -1 && IsPlayerInfoAvailable(RenderLastId))
 	{
@@ -1821,6 +1859,44 @@ void CPlayers::OnRender()
 		RenderHookCollLine(&pClientData->m_RenderPrev, &pClientData->m_RenderCur, RenderLastId);
 		GameClient()->m_NamePlates.RenderFlyingNamePlateRopeGame(pClientData->m_RenderPos, GameClient()->m_Snap.m_apPlayerInfos[RenderLastId], 1.0f);
 		RenderPlayer(&pClientData->m_RenderPrev, &pClientData->m_RenderCur, &aRenderInfo[RenderLastId], RenderLastId);
+
+		if(g_Config.m_BcGqShowActionStatusAboveTee)
+		{
+			bool IsHooking = false;
+			bool IsHammering = false;
+
+			const auto &Char = GameClient()->m_Snap.m_aCharacters[RenderLastId];
+			if(Char.m_Active)
+			{
+				if(Char.m_Cur.m_HookState > 0)
+				{
+					IsHooking = true;
+				}
+				if(Char.m_Cur.m_Weapon == WEAPON_HAMMER && (Char.m_Cur.m_AttackTick > 0))
+				{
+					IsHammering = true;
+				}
+			}
+
+			if(IsHooking || IsHammering)
+			{
+				const vec2 Pos = pClientData->m_RenderPos + vec2(0.0f, -60.0f);
+				const char *pText = IsHooking ? "HOOK" : "HAMMER";
+				ColorRGBA TextColor = IsHooking ? ColorRGBA(0.2f, 0.85f, 1.0f, 1.0f) : ColorRGBA(1.0f, 0.4f, 0.2f, 1.0f);
+
+				Graphics()->TextureClear();
+				CUIRect Card = {Pos.x - 22.0f, Pos.y - 8.0f, 44.0f, 16.0f};
+				Card.Draw(ColorRGBA(0.04f, 0.05f, 0.08f, 0.75f), IGraphics::CORNER_ALL, 4.0f);
+
+				CUIRect Glow = {Pos.x - 23.0f, Pos.y - 9.0f, 46.0f, 18.0f};
+				Glow.Draw(TextColor.WithMultipliedAlpha(0.4f), IGraphics::CORNER_ALL, 5.0f);
+				Card.Draw(ColorRGBA(0.04f, 0.05f, 0.08f, 0.85f), IGraphics::CORNER_ALL, 4.0f);
+
+				TextRender()->TextColor(TextColor);
+				TextRender()->Text(Pos.x - (IsHooking ? 14.0f : 19.0f), Pos.y - 6.0f, 7.0f, pText);
+				TextRender()->TextColor(TextRender()->DefaultTextColor());
+			}
+		}
 	}
 }
 

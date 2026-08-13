@@ -1,2 +1,0 @@
-# Format: PlayerName | MapName
-.x0r* | 2 Days in the back
