@@ -18,7 +18,7 @@ jobs:
           cmake --build . --config Release
           
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: BestClient-Executable
           path: build/Release/*.exe
