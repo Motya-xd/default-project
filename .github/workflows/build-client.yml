@@ -10,7 +10,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install pkg-config ninja-build libcurl4-openssl-dev libfreetype6-dev libnotify-dev libogg-dev libopus-dev libopusfile-dev libsdl2-dev libsqlite3-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libswscale-dev libx264-dev libpng-dev libvulkan-dev libglew-dev libwebsockets-dev -y
+          sudo apt-get install pkg-config ninja-build libcurl4-openssl-dev libfreetype6-dev libnotify-dev libogg-dev libopus-dev libopusfile-dev libsdl2-dev libsqlite3-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libswscale-dev libx264-dev libpng-dev libglew-dev libwebsockets-dev -y
           
       - name: Setup CMake
         uses: lukka/get-cmake@latest
@@ -20,7 +20,7 @@ jobs:
           cd BestClient-Latest-GQ
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -GNinja -DDISCORD=OFF
+          cmake .. -DCMAKE_BUILD_TYPE=Release -GNinja -DDISCORD=OFF -DVULKAN=OFF
           cmake --build .
           
       - name: Upload Artifact
