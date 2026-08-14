@@ -1,16 +1,16 @@
-name: Build BestClient (Windows)
+name: Build BestClient
 on: [push]
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Install dependencies via vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgGitCommitId: 'master'
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install pkg-config ninja-build libcurl4-openssl-dev libfreetype6-dev libnotify-dev libogg-dev libopus-dev libopusfile-dev libsdl2-dev libsqlite3-dev libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libswscale-dev libx264-dev libpng-dev libvulkan-dev libglew-dev libwebsockets-dev -y
           
       - name: Setup CMake
         uses: lukka/get-cmake@latest
@@ -20,11 +20,11 @@ jobs:
           cd BestClient-Latest-GQ
           mkdir build
           cd build
-          cmake .. -DDISCORD=OFF
-          cmake --build . --config Release
+          cmake .. -DCMAKE_BUILD_TYPE=Release -GNinja -DDISCORD=OFF
+          cmake --build .
           
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BestClient-Windows
-          path: BestClient-Latest-GQ/build/Release/*.exe
+          name: BestClient-Executable
+          path: BestClient-Latest-GQ/build/BestClient*
