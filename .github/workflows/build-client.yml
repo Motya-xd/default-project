@@ -1,16 +1,16 @@
-name: Build BestClient
+name: Build BestClient (Windows)
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake g++ libcurl4-openssl-dev libsqlite3-dev libfreetype6-dev libogg-dev libopus-dev libopusfile-dev libsdl2-dev libpng-dev rustc cargo python3 python3-pip
+      - name: Install dependencies via vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: 'master'
           
       - name: Setup CMake
         uses: lukka/get-cmake@latest
@@ -21,10 +21,10 @@ jobs:
           mkdir build
           cd build
           cmake .. -DDISCORD=OFF
-          cmake --build . --config Release -j4
+          cmake --build . --config Release
           
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BestClient-Executable
-          path: BestClient-Latest-GQ/build/BestClient*
+          name: BestClient-Windows
+          path: BestClient-Latest-GQ/build/Release/*.exe
