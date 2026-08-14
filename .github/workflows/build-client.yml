@@ -1,0 +1,25 @@
+name: Build BestClient
+on: [push]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup CMake
+        uses: lukka/get-cmake@latest
+        
+      - name: Configure and Build
+        run: |
+          cd BestClient-Latest-GQ
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build . --config Release
+          
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BestClient-Executable
+          path: BestClient-Latest-GQ/build/Release/*.exe
