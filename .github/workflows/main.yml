@@ -13,7 +13,7 @@ jobs:
           cd vcpkg
           ./bootstrap-vcpkg.bat
           ./vcpkg integrate install
-          ./vcpkg install curl freetype glew gtest libpng ogg openssl opus opusfile sdl2 sqlite3 wavpack zlib
+          ./vcpkg install curl freetype glew gtest libpng libogg openssl opus libopusenc opusfile sdl2 sqlite3 wavpack zlib
         
       - name: Setup CMake
         uses: lukka/get-cmake@latest
