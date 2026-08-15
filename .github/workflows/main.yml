@@ -7,14 +7,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Install dependencies via vcpkg
-        run: |
-          git clone https://github.com/microsoft/vcpkg.git
-          cd vcpkg
-          ./bootstrap-vcpkg.bat
-          ./vcpkg integrate install
-          ./vcpkg install curl freetype glew gtest libpng libogg openssl opus libopusenc opusfile sdl2 sqlite3 wavpack zlib
-        
       - name: Download ddnet-libs
         run: |
           cd BestClient-Latest-GQ
@@ -28,7 +20,7 @@ jobs:
           cd BestClient-Latest-GQ
           mkdir build
           cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DDISCORD=OFF -DPREFER_BUNDLED_LIBS=OFF
+          cmake .. -DDISCORD=OFF -DPREFER_BUNDLED_LIBS=ON
           cmake --build . --config Release
           
       - name: Upload Artifact
