@@ -23,7 +23,7 @@ jobs:
           cd BestClient-Latest-GQ
           mkdir build
           cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DDISCORD=OFF
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DDISCORD=OFF -DPREFER_BUNDLED_LIBS=ON
           cmake --build . --config Release
           
       - name: Upload Artifact
