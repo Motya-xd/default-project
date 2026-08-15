@@ -15,6 +15,11 @@ jobs:
           ./vcpkg integrate install
           ./vcpkg install curl freetype glew gtest libpng libogg openssl opus libopusenc opusfile sdl2 sqlite3 wavpack zlib
         
+      - name: Download ddnet-libs
+        run: |
+          cd BestClient-Latest-GQ
+          git clone https://github.com/ddnet/ddnet-libs.git ddnet-libs
+        
       - name: Setup CMake
         uses: lukka/get-cmake@latest
         
@@ -23,7 +28,7 @@ jobs:
           cd BestClient-Latest-GQ
           mkdir build
           cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DDISCORD=OFF -DPREFER_BUNDLED_LIBS=ON
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DDISCORD=OFF -DPREFER_BUNDLED_LIBS=OFF
           cmake --build . --config Release
           
       - name: Upload Artifact
