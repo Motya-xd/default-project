@@ -6,11 +6,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: Download ddnet-libs
-        run: |
-          cd BestClient-Latest-GQ
-          git clone https://github.com/ddnet/ddnet-libs.git ddnet-libs
+        with:
+          submodules: recursive
         
       - name: Setup CMake
         uses: lukka/get-cmake@latest
