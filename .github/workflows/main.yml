@@ -7,6 +7,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
+      - name: Install dependencies via vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.bat
+          ./vcpkg integrate install
+          ./vcpkg install curl freetype glew gtest libpng ogg openssl opus opusfile sdl2 sqlite3 wavpack zlib
+        
       - name: Setup CMake
         uses: lukka/get-cmake@latest
         
@@ -15,7 +23,7 @@ jobs:
           cd BestClient-Latest-GQ
           mkdir build
           cd build
-          cmake ..
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake -DDISCORD=OFF
           cmake --build . --config Release
           
       - name: Upload Artifact
